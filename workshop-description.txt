@@ -1,0 +1,34 @@
+[b]Pauses the game a few seconds after a savegame finishes loading[/b], so you arrive in a stopped world instead of one that is already moving.
+
+Press your pause key ([b]P[/b] by default) to resume.
+
+That is the whole mod. No dependencies, no UI, no settings, nothing else changed.
+
+[h1]Why there is a delay[/h1]
+
+Pausing the [i]instant[/i] the world comes up leaves the map's [b]per-sector resource display empty for the rest of the session[/b] — the overlay is not built while the game is paused, and on an established save it does not come back. So the pause is deferred three seconds past the game's own post-load signal, which avoids it entirely. Pausing by hand at any later point never causes this.
+
+If you ever load in and find the mining overlay missing, that is the symptom — and it is worth knowing whichever mod you use for this.
+
+[h1]Compatibility[/h1]
+
+[list]
+[*] No dependencies and no other mod required.
+[*] Touches no menu and replaces no game file — it adds one Mission Director cue and one small Lua handler.
+[*] Safe to remove at any time ([i]save="false"[/i]): it writes nothing into your savegame.
+[*] Works on Linux and Windows.
+[/list]
+
+[h1]Credit[/h1]
+
+The approach comes from [b]kuertee's Autocamera-Autopilot-Autopause[/b], whose pause-on-load option is the feature this replaces. The post-load trigger and the idea of staging the pause behind a short delay are both from reading that mod — thanks to kuertee for it.
+
+No code is shared: Autocamera pauses by opening the Options menu, relying on any fullscreen menu pausing as a side effect, while this calls the game's own Pause() directly.
+
+This exists only because that one feature was wanted without the rest of the mod, which is a fine mod — if you want automatic cameras, autopilot and the other pause triggers, use [b]Autocamera-Autopilot-Autopause[/b] instead of this.
+
+[h1]Source[/h1]
+
+Full source, four files, and the reasoning behind the delay: [url=https://github.com/mkoester/x4-mod-pause-on-load]GitHub[/url]
+
+Released under the [b]MIT licence[/b] — use it, fork it, learn from it.

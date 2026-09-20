@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Pause once the game has finished loading.
+
+     md.Setup.Start is the game's own "world is up" signal, and is what
+     kuertee's Autocamera uses for the same feature — borrowed because it is
+     proven in the field, not guessed at.
+
+     The pause itself is raised into the UI because there is no MD action for
+     it: Pause() is a Lua global of the menus environment. Autocamera instead
+     opens the Options menu, which pauses as a side effect of any fullscreen
+     menu being up; that is the older, more roundabout route and it is not
+     needed when Pause() can be called directly.
+-->
+<mdscript name="mk_pause_on_load" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="md.xsd">
+  <cues>
+    <cue name="PauseOnLoad">
+      <conditions>
+        <event_cue_signalled cue="md.Setup.Start" />
+      </conditions>
+      <!-- Delayed on purpose. Pausing the instant md.Setup.Start fires leaves the
+           map's per-sector resource display empty for the whole paused period:
+           measured 2026-09-20 with this extension as the only mod enabled, on a
+           new campaign, and the overlay returns after unpausing and reopening the
+           map. Giving the world a few seconds of running time before pausing is
+           the cheap fix; kuertee's Autocamera stages its own post-load work the
+           same way (checktime="player.age + 3s"). -->
+      <delay exact="3s" />
+      <actions>
+        <raise_lua_event name="'mk_pause_on_load'" />
+      </actions>
+    </cue>
+  </cues>
+</mdscript>

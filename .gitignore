@@ -1,0 +1,6 @@
+# Build output of `WorkshopTool ... -buildcat` — the loose files are the source.
+ext_01.cat
+ext_01.dat
+
+# Steam signature files, added on the consumer side.
+*.sig

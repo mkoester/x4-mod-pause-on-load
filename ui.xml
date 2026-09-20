@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- No <dependency> here on purpose: this addon needs nothing from kuertee's
+     UI Extensions, which is what Autocamera drags in. -->
+<addon name="mk_pause_on_load" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../ui/core/addon.xsd">
+  <environment type="menus">
+    <file name="ui/mk_pause_on_load.lua" />
+  </environment>
+</addon>
