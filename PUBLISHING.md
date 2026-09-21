@@ -39,6 +39,23 @@ WorkshopTool publishx4 ^
   is 1920x1080.
 - `-buildcat` — packs the loose files into `ext_01.cat` / `ext_01.dat` for you. Those
   are build output and are gitignored here; the loose files remain the source.
+  **The tool also deletes them again on cleanup** unless `-keepcatfiles` is given, so
+  after a publish the staging folder holds only the sources. Nothing is lost:
+  `XRCatTool` packs files **verbatim** — no compression, no XML stripping — so `.dat`
+  is the payloads concatenated in index order, and `.cat` is a text index of
+  `path size mtime md5`. Verified 2026-09-21: all four entries matched the committed
+  files on both size and MD5. Only the `mtime` column is not derivable from the repo
+  (it is the staging copy's mtime), so a rebuild is byte-identical apart from that.
+
+  That gives a cheap pre-upload check — build with `-keepcatfiles` and compare the
+  index against the repo before answering `y`, which proves the packed bytes are the
+  committed bytes:
+
+  ```sh
+  while read -r f size ts md5; do          # NB: not `path` — zsh ties it to $PATH
+    [ "$md5" = "$(md5sum "$f" | cut -d' ' -f1)" ] && echo "ok   $f" || echo "DIFF $f"
+  done < ext_01.cat
+  ```
 
 ⚠ **Do not publish from the working tree — use a clean staging copy.** `-buildcat`
 packs *everything* under `-path`, and the tool uploads any loose `.txt`/`.pdf`/`.cur`/
