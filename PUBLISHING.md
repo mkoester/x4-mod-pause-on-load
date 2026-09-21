@@ -14,8 +14,10 @@ its UI.
   *Tools* because you own X4; also downloadable from egosoft.com. Launching it opens
   a command prompt in the folder holding `WorkshopTool.exe`.
 
-⚠ **`WorkshopTool` is a Windows executable.** Whether it runs under Proton or Wine is
-unverified — if it does not, this step needs a Windows machine with X4 installed.
+**`WorkshopTool` is a Windows executable, and it runs fine under Proton** (measured
+2026-09-21, tool v1.15, publishing this mod). Launching X Tools from Steam drops you
+in a `cmd` shell at the Steam library root; Wine maps `Z:` to `/`, so Linux paths go
+in as `Z:\home\...`. No Windows machine needed.
 
 Run `WorkshopTool` with no arguments to list every command and switch; the online
 guides are older than the tool.
@@ -37,6 +39,22 @@ WorkshopTool publishx4 ^
   is 1920x1080.
 - `-buildcat` — packs the loose files into `ext_01.cat` / `ext_01.dat` for you. Those
   are build output and are gitignored here; the loose files remain the source.
+
+⚠ **Do not publish from the working tree — use a clean staging copy.** `-buildcat`
+packs *everything* under `-path`, and the tool uploads any loose `.txt`/`.pdf`/`.cur`/
+`.mkv` beside the catalog. From this repo that would ship `README.md`, `PUBLISHING.md`,
+`workshop-description.txt` and **`.git/`** to every subscriber. The catalog tool's own
+filters drop root-level `.xml`/`.jpg`/`.png` and a few extensions, but nothing else —
+they are not a safety net. Stage only what the game loads, plus `LICENSE`:
+
+```sh
+STAGE=../.publish/mk_pause_on_load        # gitignored in the workspace
+rm -rf "$STAGE" && mkdir -p "$STAGE"
+cp -r content.xml ui.xml md ui LICENSE "$STAGE"/
+```
+
+Then check `ext_01.cat` — it is a plain-text index, one line per packed file — before
+answering `y` at the upload prompt.
 
 ## Updating a published item
 
@@ -61,6 +79,17 @@ git add content.xml && git commit -m "chore: record the Workshop id"
 
 Anything keying on the old `id` breaks at that moment — see the note in the
 x4-notes vault about re-pointing x4prof profiles.
+
+## What happens after a successful publish
+
+- **The item is created hidden.** Visibility is set on its web page, so a first publish
+  is safe to run and review. `WorkshopTool showpage` opens it.
+- **Subscribers read the name and description from Steam, not from `content.xml`**,
+  unless a localisation entry for their language is supplied there. So the BBCode in
+  `workshop-description.txt` is pasted into the page by hand; `-namedesc up` pushes
+  `content.xml`'s text on a later `update`.
+- This mod is **`ws_3805880311`**, published 2026-09-21:
+  [Workshop page](https://steamcommunity.com/sharedfiles/filedetails/?id=3805880311).
 
 ## Rules Egosoft states
 

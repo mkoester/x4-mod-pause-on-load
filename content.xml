@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<content id="mk_pause_on_load"
+<content id="ws_3805880311"
          name="Pause On Load"
          author="Mirko Köster"
          version="101"
-         date="2026-09-20"
+         date="2026-09-21"
          save="false"
-         description="Pauses the game once a savegame has finished loading. Nothing else.&#13;&#10;&#13;&#10;Press P (INPUT_ACTION_PAUSE) to resume." />
+         description="Pauses the game once a savegame has finished loading. Nothing else.&#13;&#10;&#13;&#10;Press P (INPUT_ACTION_PAUSE) to resume."
+         sync="false"
+         lastupdate="1790020632" />
