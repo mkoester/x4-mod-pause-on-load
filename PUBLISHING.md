@@ -88,8 +88,31 @@ x4-notes vault about re-pointing x4prof profiles.
   unless a localisation entry for their language is supplied there. So the BBCode in
   `workshop-description.txt` is pasted into the page by hand; `-namedesc up` pushes
   `content.xml`'s text on a later `update`.
+- **The listing shows the Steam account name as the author**, not `content.xml`'s
+  `author` attribute — ours reads *MirkoMachine* there. Nothing in `content.xml`
+  changes that, so do not go hunting when the name on the page is not the one in
+  the file.
 - This mod is **`ws_3805880311`**, published 2026-09-21:
   [Workshop page](https://steamcommunity.com/sharedfiles/filedetails/?id=3805880311).
+
+## ⚠ A subscribed copy collides with a dev symlink
+
+**Subscribers get the `-foldername`, not the id** — measured 2026-09-21 against the
+installed mods (`sn_mod_support_apis` holds `id="ws_2042901274"`; only a *failed*
+download is left named `ws_<id>`). So this mod lands in every subscriber's
+`extensions/mk_pause_on_load/` — the same path a development symlink uses, and both
+carry the same `id`, which is what the user `content.xml` keys enabled/disabled on.
+One machine cannot hold both.
+
+Worse, **a Workshop sync then points at the git tree**: `x4launch --sync` with that
+symlink in place has X4 write the downloaded copy through it. Untested, and not worth
+testing on the repo.
+
+So on a machine that develops this mod, **do not subscribe**. To check what a
+subscriber actually receives, do it deliberately: remove the symlink, subscribe, sync,
+test, unsubscribe, restore the symlink. To run both at once, the dev copy needs its own
+folder name *and* its own `id` (and its MD cue and Lua event names are shared, so two
+enabled copies pause twice).
 
 ## Rules Egosoft states
 
