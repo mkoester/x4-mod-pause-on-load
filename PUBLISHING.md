@@ -68,7 +68,16 @@ they are not a safety net. Stage only what the game loads, plus `LICENSE`:
 STAGE=../.publish/mk_pause_on_load        # gitignored in the workspace
 rm -rf "$STAGE" && mkdir -p "$STAGE"
 cp -r content.xml ui.xml md ui LICENSE "$STAGE"/
+sed -i 's/id="mk_pause_on_load"/id="ws_3805880311"/' "$STAGE"/content.xml
 ```
+
+⚠ **That `sed` is not optional.** `content.xml` here carries the *development* id
+`mk_pause_on_load`, not the Workshop id, so that the dev symlink under the game's
+`extensions/` stays a separate extension from the subscribed copy — they would
+otherwise share an `id`, which is what X4 keys enabled/disabled on. But `WorkshopTool
+update` resolves the item from the `id` in the file it is handed, so the staging copy
+must carry **`ws_3805880311`** or the update will not find the item and will publish a
+second one, which Egosoft's rules forbid.
 
 Then check `ext_01.cat` — it is a plain-text index, one line per packed file — before
 answering `y` at the upload prompt.
@@ -77,7 +86,7 @@ answering `y` at the upload prompt.
 
 ```
 WorkshopTool update ^
-  -path "C:\...\X4 Foundations\extensions\mk_pause_on_load" ^
+  -path "Z:\home\...\workspace_x4\.publish\mk_pause_on_load" ^
   -buildcat -changenote "what changed in this version"
 ```
 
@@ -87,22 +96,18 @@ WorkshopTool update ^
 ## ⚠ Publishing rewrites `content.xml`
 
 On a successful first publish the tool **replaces the `id` attribute** with the
-Workshop id (`ws_<number>`), and adds `sync` and `lastupdate`. That is how later
-updates find the item, so the change must be kept.
+Workshop id (`ws_<number>`), and adds `sync` and `lastupdate`.
 
-⚠ **It rewrites the file at `-path`, which is the staging copy** — not this repo. The
-2026-09-21 publish only landed the id here because it ran from the extensions symlink,
-straight into the git tree; published the documented way, from `../.publish/`, the
-rewritten file is over there and this repo never sees it. Copy it back first:
+⚠ **It rewrites the file at `-path`, which is the staging copy** — not this repo. That
+is now the point, not a hazard: the rewrite lands on the throwaway copy and this repo
+keeps its development `id`. **Do not copy it back.** The 2026-09-21 publish did land it
+here (`e7c5bef`) only because it ran from the extensions symlink, straight into the git
+tree; that was undone on 2026-09-22 when the two copies turned out to need distinct ids.
 
-```sh
-cp ../.publish/mk_pause_on_load/content.xml content.xml
-git diff content.xml                                    # id= should now read ws_<number>
-git add content.xml && git commit -m "chore: record the Workshop id"
-```
-
-Anything keying on the old `id` breaks at that moment — see the note in the
-x4-notes vault about re-pointing x4prof profiles.
+The `ws_` id lives in prose — here, in `README.md` and in the workspace `AGENTS.md` —
+and is injected by the `sed` in the staging block above. Anything else keying on an
+`id` breaks when one changes: see the note in the x4-notes vault about re-pointing
+x4prof profiles.
 
 ## What happens after a successful publish
 
@@ -132,11 +137,15 @@ Worse, **a Workshop sync then points at the git tree**: `x4launch --sync` with t
 symlink in place has X4 write the downloaded copy through it. Untested, and not worth
 testing on the repo.
 
-So on a machine that develops this mod, **do not subscribe**. To check what a
-subscriber actually receives, do it deliberately: remove the symlink, subscribe, sync,
-test, unsubscribe, restore the symlink. To run both at once, the dev copy needs its own
-folder name *and* its own `id` (and its MD cue and Lua event names are shared, so two
-enabled copies pause twice).
+**Resolved 2026-09-22 — this machine holds both.** The dev copy has its own folder
+name (`mk_pause_on_load_dev`, so a sync cannot write through the link) *and* its own
+`id` (`mk_pause_on_load` in this repo, the `ws_` one injected only at staging). With
+distinct ids `x4prof status` counts both and prints no `broken:` line.
+
+⚠ **Only one of the two may be enabled at a time.** The MD cue and Lua event names are
+*not* namespaced by id, so two enabled copies pause twice. The x4prof profiles carry
+the dev entry `enabled="false"` everywhere for exactly this reason — an extension a
+profile does not mention is enabled when that profile is applied.
 
 ## Rules Egosoft states
 
