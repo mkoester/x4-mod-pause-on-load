@@ -87,10 +87,17 @@ WorkshopTool update ^
 ## ⚠ Publishing rewrites `content.xml`
 
 On a successful first publish the tool **replaces the `id` attribute** with the
-Workshop id (`ws_<number>`). That is how later updates find the item, so the change
-must be kept:
+Workshop id (`ws_<number>`), and adds `sync` and `lastupdate`. That is how later
+updates find the item, so the change must be kept.
+
+⚠ **It rewrites the file at `-path`, which is the staging copy** — not this repo. The
+2026-09-21 publish only landed the id here because it ran from the extensions symlink,
+straight into the git tree; published the documented way, from `../.publish/`, the
+rewritten file is over there and this repo never sees it. Copy it back first:
 
 ```sh
+cp ../.publish/mk_pause_on_load/content.xml content.xml
+git diff content.xml                                    # id= should now read ws_<number>
 git add content.xml && git commit -m "chore: record the Workshop id"
 ```
 
