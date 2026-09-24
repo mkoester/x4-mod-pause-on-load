@@ -13,7 +13,16 @@
 -->
 <mdscript name="mk_pause_on_load" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="md.xsd">
   <cues>
-    <cue name="PauseOnLoad">
+    <!-- instantiate="true" is what makes this fire on EVERY load. A plain cue
+         fires once, completes, and the completed state is written into the
+         savegame - so every later save of that game never pauses again. Measured
+         2026-09-24: all saves after the first load stored
+         <cue name="PauseOnLoad" state="complete"/>. Egosoft's own per-load cue
+         (Timelines_Unlock_Message) is instantiating for the same reason.
+
+         Renamed from PauseOnLoad on purpose: existing saves hold that name as
+         complete, and a fresh name leaves that stale state with nothing to bind to. -->
+    <cue name="PauseOnEveryLoad" instantiate="true">
       <conditions>
         <event_cue_signalled cue="md.Setup.Start" />
       </conditions>

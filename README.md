@@ -19,11 +19,19 @@ time later never reproduces the fault, because by then the data exists.
 If you ever see the mining overlay missing after a load, that is the symptom, and
 a longer delay is the fix.
 
+## Why the cue is instantiating
+
+An MD cue without `instantiate="true"` fires **once per game**, not once per
+load: it completes, and the completed state is saved with the game. Version 101
+did exactly that. It paused on the first load and never again on any save
+written after it. Fixed in 102, which also renames the cue so the stale
+`complete` state already in those saves has nothing to attach to.
+
 ## How it works
 
 | File | Role |
 | --- | --- |
-| `md/mk_pause_on_load.xml` | cue on `md.Setup.Start`, `<delay exact="3s"/>`, raises a Lua event |
+| `md/mk_pause_on_load.xml` | instantiating cue on `md.Setup.Start`, `<delay exact="3s"/>`, raises a Lua event |
 | `ui/mk_pause_on_load.lua` | handles the event, calls `Pause()` |
 | `ui.xml` | declares the addon — no dependencies |
 | `content.xml` | the manifest |
