@@ -1,8 +1,8 @@
 # Pause On Load — an X4: Foundations extension
 
 Pauses the game a few seconds after a savegame finishes loading, so you arrive
-in a stopped world instead of one that is already moving. Press the pause key
-(**P** by default) to resume.
+in a stopped world instead of one that is already moving. It does that by
+opening the Options menu. Press **ESC** to resume.
 
 That is the whole mod. Four files, no dependencies, no UI, no settings.
 
@@ -32,14 +32,17 @@ written after it. Fixed in 102, which also renames the cue so the stale
 | File | Role |
 | --- | --- |
 | `md/mk_pause_on_load.xml` | instantiating cue on `md.Setup.Start`, `<delay exact="3s"/>`, raises a Lua event |
-| `ui/mk_pause_on_load.lua` | handles the event, calls `Pause()` |
+| `ui/mk_pause_on_load.lua` | handles the event, opens the Options menu |
 | `ui.xml` | declares the addon — no dependencies |
 | `content.xml` | the manifest |
 
-`Pause()` and `Unpause()` are globals of the menus environment; the base game's
-`ego_gameoptions/gameoptions.lua` uses both. Calling `Pause()` directly is only
-safe because `INPUT_ACTION_PAUSE` is bound — recheck that if you ever clear the
-binding, or you will load into a pause you cannot lift.
+**Why a menu and not a bare `Pause()`.** `Pause()` and `Unpause()` are the *menu*
+pause. Every base-game caller pairs them: a menu pauses in `onShowMenu` and unpauses
+in `cleanup`. The pause key (**P**) toggles a separate player pause and cannot lift
+a menu pause. Earlier builds called `Pause()` alone: **P** did nothing visible, and only
+**ESC ESC** freed the game, because opening and closing Options ran its `Unpause()`.
+Opening the Options menu gives the pause an owner, and ESC is its sanctioned exit.
+101 already had the flaw. It went unnoticed because 101 only ever paused once (see above).
 
 ## Install
 
@@ -63,8 +66,8 @@ is skipped in silence, with no error anywhere.
 The approach is taken from **kuertee's [Autocamera-Autopilot-Autopause]**, whose
 pause-on-load option is the feature this replaces: the `md.Setup.Start` trigger
 and the idea of staging post-load work behind a short delay are both from reading
-that mod. No code is shared — Autocamera pauses by opening the Options menu, since
-any fullscreen menu pauses as a side effect, while this calls `Pause()` directly.
+that mod. No code is shared, but since 102 the method is the same: open the
+Options menu, because a bare `Pause()` has no exit the player can reach.
 
 Written because only that one feature was wanted, without the rest of the mod or
 its `kuertee_ui_extensions` dependency.

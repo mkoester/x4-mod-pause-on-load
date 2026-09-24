@@ -5,6 +5,6 @@
          version="102"
          date="2026-09-24"
          save="false"
-         description="Pauses the game once a savegame has finished loading. Nothing else.&#13;&#10;&#13;&#10;Press P (INPUT_ACTION_PAUSE) to resume."
+         description="Pauses the game once a savegame has finished loading. Nothing else.&#13;&#10;&#13;&#10;Opens the Options menu to do it: press ESC to resume."
          sync="false"
          lastupdate="1790020632" />

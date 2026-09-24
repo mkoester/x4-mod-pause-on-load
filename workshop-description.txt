@@ -1,6 +1,6 @@
 [b]Pauses the game a few seconds after a savegame finishes loading[/b], so you arrive in a stopped world instead of one that is already moving.
 
-Press your pause key ([b]P[/b] by default) to resume.
+It opens the Options menu to do it. Press [b]ESC[/b] to resume.
 
 That is the whole mod. No dependencies, no UI, no settings, nothing else changed.
 
@@ -23,7 +23,7 @@ If you ever load in and find the mining overlay missing, that is the symptom —
 
 The approach comes from [b]kuertee's Autocamera-Autopilot-Autopause[/b], whose pause-on-load option is the feature this replaces. The post-load trigger and the idea of staging the pause behind a short delay are both from reading that mod — thanks to kuertee for it.
 
-No code is shared: Autocamera pauses by opening the Options menu, relying on any fullscreen menu pausing as a side effect, while this calls the game's own Pause() directly.
+No code is shared, but the method is the same: both open the Options menu, because a menu is the only thing that owns a pause the player can end.
 
 This exists only because that one feature was wanted without the rest of the mod, which is a fine mod — if you want automatic cameras, autopilot and the other pause triggers, use [b]Autocamera-Autopilot-Autopause[/b] instead of this.
 
